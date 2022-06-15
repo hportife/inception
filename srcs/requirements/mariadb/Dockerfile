@@ -1,11 +1,13 @@
 FROM debian:buster
 
-RUN apt-get update && apt-get upgrade -y \
-	&& apt-get install -y mariadb-server
+RUN apt-get update
+RUN apt-get install -y mariadb-server
 
-COPY conf/setup.sql ./
+EXPOSE 3306
 
-RUN sed -i 's/bind-address/bind-address = 0.0.0.0 #/i' /etc/mysql/mariadb.conf.d/50-server.cnf \
-	&& service mysql start && mysql < setup.sql
+COPY ./conf/server.cnf /etc/mysql/mariadb.conf.d/
+COPY ./tools/ /var/www/
 
-CMD	/usr/bin/mysqld_safe
+RUN service mysql start && mysql < /var/www/initial_db.sql && rm -f /var/www/initial_db.sql;
+
+CMD ["mysqld"]

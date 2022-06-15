@@ -1,19 +1,15 @@
-FROM alpine:3
+FROM debian:buster
 
-RUN apk add --update wget curl bash util-linux openrc mysql-client git\
-					php \
-					php-fpm \
-					php-iconv \
-					php-json \
-					php-mysqli \
-					php-phar
-
-COPY conf/www.conf /etc/php7/php-fpm.d/www.conf
-
-WORKDIR /var/www/html/wordpress
-
-#COPY conf/setup_wp-cli.sh ./
-
-#CMD	/bin/bash setup_wp-cli.sh
+RUN apt-get update
+RUN apt-get -y install php7.3 php-mysqli php-fpm wget sendmail
 
 EXPOSE 9000
+
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d
+COPY ./tools /var/www/
+
+RUN chmod +x /var/www/wordpress_start.sh
+
+ENTRYPOINT [ "/var/www/wordpress_start.sh" ]
+
+CMD ["/usr/sbin/php-fpm7.3", "--nodaemonize"]
