@@ -6,23 +6,26 @@ all: prune reload
 
 linux:
 	@ echo "127.0.0.1 hportife.42.fr" >> /etc/hosts
-	
+
+ps:	
+	@ $(YMLSRC) ps
+
 up:
 	@ $(YMLSRC) up
 
 stop:
 	@ $(YMLSRC) down
 
-clean: stop
-	@ rm -rf ~/Desktop/inception
-
 sclean: stop
 	@ sudo rm -rf ~/Desktop/inception
+
+clean: stop
+	@ rm -rf ~/Desktop/inception
 
 prune: clean
 	@ docker system prune -f
 
-reload: 
+reload:  
 	@ $(YMLSRC) up --build
 
 .PHONY: linux stop clean prune reload all
