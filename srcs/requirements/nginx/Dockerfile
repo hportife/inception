@@ -6,7 +6,7 @@ RUN apt-get install -y nginx openssl
 EXPOSE 443
 
 COPY /conf/nginx.conf /etc/nginx/sites-enabled/default
-COPY ./nginx_start.sh /var/www
+COPY ./tools/nginx_start.sh /var/www
 
 RUN chmod +x /var/www/nginx_start.sh
 

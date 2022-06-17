@@ -16,6 +16,9 @@ stop:
 clean: stop
 	@ rm -rf ~/Desktop/inception
 
+sclean: stop
+	@ sudo rm -rf ~/Desktop/inception
+
 prune: clean
 	@ docker system prune -f
 

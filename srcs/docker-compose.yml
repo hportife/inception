@@ -1,62 +1,48 @@
-version: "3.9"
- 
-services:
- mariadb:
-  container_name: mariadb
-  build: ./requirements/mariadb
-  restart: always
-    #  volumes:
-    #   - db:/var/lib/mysql
-  networks:
-   - inception
-  env_file:
-   - .env
-
- wordpress:
-  depends_on:
-   - mariadb
-  container_name: wordpress
-  build: ./requirements/wordpress
-  restart: always
-    #  volumes:
-    #   - wp:/var/www/html
-  networks:
-   - inception
-  env_file:
-   - .env
-
- nginx:
-  depends_on:
-   - wordpress
-  container_name: nginx
-  build: ./requirements/nginx
-  restart: always
-    #  volumes:
-    #   - wp:/var/www/html
-  networks:
-   - inception
-  ports:
-   - "443:443"
-  env_file:
-   - .env
-
-     #volumes:
-     # wp:
-     #  driver: local
-     #  name: wp
-     #  driver_opts:
-     #   type: none
-     #   o: bind
-     #   device: /home/hportife/data/wordpress
-     # db:
-     #  driver: local
-     #  name: db
-     #  driver_opts:
-     #   type: none
-     #   o: bind
-     #   device: /home/hportife/data/mariadb
+version: "3.5"
 
 networks:
- inception:
-  name: inception
-  driver: bridge
+  app-network:
+    name: app-network
+    driver: bridge
+
+services:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    volumes:
+      - "~/Desktop/inception/mariadb:/var/lib/mysql"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    volumes:
+      - "~/Desktop/inception/website:/var/www/html"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    volumes:
+      - "~/Desktop/inception/website:/var/www/html"
+    networks:
+      - app-network
+    restart: unless-stopped
