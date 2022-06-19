@@ -6,7 +6,7 @@ define( 'DB_USER', 'hportife' );
 
 define( 'DB_PASSWORD', '112233usr' );
 
-define( 'DB_HOST', 'mariadb' );
+define( 'DB_HOST', 'wordpress.app-network' );
 
 define( 'DB_CHARSET', 'utf8' );
 

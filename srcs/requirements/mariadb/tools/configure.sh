@@ -30,6 +30,7 @@ CREATE DATABASE 'wordpress' CHARACTER SET utf8 COLLATE utf8_general_ci;
 CREATE USER 'hportife'@'%' IDENTIFIED by '112233usr';
 GRANT ALL PRIVILEGES ON wordpress.* TO 'hportife'@'%';
 FLUSH PRIVILEGES;
+SELECT * FROM mysql.user;
 EOF
 	# run init.sql
 	/usr/bin/mysqld --user=mysql --bootstrap < $tfile
