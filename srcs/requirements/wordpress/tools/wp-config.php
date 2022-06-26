@@ -6,11 +6,11 @@ define( 'DB_USER', 'hportife' );
 
 define( 'DB_PASSWORD', '112233usr' );
 
-define( 'DB_HOST', 'wordpress.app-network' );
+define( 'DB_HOST', 'mariadb' );
 
 define( 'DB_CHARSET', 'utf8' );
 
-define( 'DB_COLLATE', '' );
+define( 'DB_COLLATE', 'utf8_general_ci' );
 
 define('AUTH_KEY',         'q,VrMu@W3N$8lsY~K;,&~}+mj|}PjcUdh)H0Lyk+jII0/ Plr^HP*(~IA#p#G%~p');
 define('SECURE_AUTH_KEY',  'KoGFkg1,vS+gINeNrx*BjS-pl#j[/Pi24PqPshVD?rm.`F*+}mU9*b d[F# l.qR');
