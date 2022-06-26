@@ -1,0 +1,271 @@
+Total reclaimed space: 0B
+Sending build context to Docker daemon  5.632kB
+Step 1/5 : FROM alpine:3.13
+ ---> 20e452a0a81a
+Step 2/5 : RUN	apk update && apk upgrade && apk add --no-cache         mariadb         mariadb-client
+ ---> Using cache
+ ---> 8369fa18a3bf
+Step 3/5 : EXPOSE 3306
+ ---> Using cache
+ ---> 1e48d63ce265
+Step 4/5 : COPY tools/configure.sh /tmp/configure.sh
+ ---> Using cache
+ ---> c5fb3554a1b7
+Step 5/5 : ENTRYPOINT ["sh", "/tmp/configure.sh"]
+ ---> Using cache
+ ---> dfcced3448c9
+Successfully built dfcced3448c9
+Successfully tagged srcs_mariadb:latest
+Sending build context to Docker daemon  24.58kB
+Step 1/9 : FROM debian:buster
+ ---> 9d4d2232003a
+Step 2/9 : RUN apt-get update
+ ---> Using cache
+ ---> 36bf15d3c71c
+Step 3/9 : RUN apt-get -y install php7.3 php-mysqli php-fpm wget sendmail mariadb-client
+ ---> Using cache
+ ---> 984a673329a2
+Step 4/9 : EXPOSE 9000
+ ---> Using cache
+ ---> aef970a11940
+Step 5/9 : COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d
+ ---> Using cache
+ ---> 47ac7afdfec6
+Step 6/9 : COPY ./tools /var/www/
+ ---> Using cache
+ ---> e5a5157c9d1e
+Step 7/9 : RUN chmod +x /var/www/wordpress_start.sh
+ ---> Using cache
+ ---> 6583238cbc8c
+Step 8/9 : ENTRYPOINT [ "/var/www/wordpress_start.sh" ]
+ ---> Using cache
+ ---> e84c0dc08da4
+Step 9/9 : CMD ["/usr/sbin/php-fpm7.3", "--nodaemonize"]
+ ---> Using cache
+ ---> e60991159f5f
+Successfully built e60991159f5f
+Successfully tagged srcs_wordpress:latest
+Sending build context to Docker daemon  5.632kB
+Step 1/9 : FROM debian:buster
+ ---> 9d4d2232003a
+Step 2/9 : RUN apt-get update
+ ---> Using cache
+ ---> 36bf15d3c71c
+Step 3/9 : RUN apt-get install -y nginx openssl
+ ---> Using cache
+ ---> 8cdfe3dfc087
+Step 4/9 : EXPOSE 443
+ ---> Using cache
+ ---> a7f649f333ff
+Step 5/9 : COPY /conf/nginx.conf /etc/nginx/sites-enabled/default
+ ---> Using cache
+ ---> ac0c820a4c63
+Step 6/9 : COPY ./tools/nginx_start.sh /var/www
+ ---> Using cache
+ ---> dba9c0a415f2
+Step 7/9 : RUN chmod +x /var/www/nginx_start.sh
+ ---> Using cache
+ ---> af01123817ee
+Step 8/9 : ENTRYPOINT [ "/var/www/nginx_start.sh" ]
+ ---> Using cache
+ ---> 5d4acddebbfa
+Step 9/9 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Using cache
+ ---> 3dc9a370b1a2
+Successfully built 3dc9a370b1a2
+Successfully tagged srcs_nginx:latest
+Attaching to mariadb, wordpress, nginx
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] /usr/bin/mysqld (mysqld 10.5.16-MariaDB) starting as process 58 ...
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Uses event mutexes
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Compressed tables use zlib 1.2.12
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Number of pools: 1
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] mysqld: O_TMPFILE is not supported on /var/tmp (disabling future attempts)
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Using Linux native AIO
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Initializing buffer pool, total size = 134217728, chunk size = 134217728
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Completed initialization of buffer pool
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: 128 rollback segments are active.
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Setting file './ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: File './ibtmp1' size is now 12 MB.
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: 10.5.16 started; log sequence number 45106; transaction id 20
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] Plugin 'FEEDBACK' is disabled.
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [Note] InnoDB: Buffer pool(s) load completed at 220626  7:09:06
+[36mmariadb      |[0m ERROR: 1064  You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''wordpress' CHARACTER SET utf8 COLLATE utf8_general_ci;' at line 1
+[36mmariadb      |[0m 2022-06-26  7:09:06 0 [ERROR] Aborting
+[33mnginx        |[0m Nginx: setting up ssl ...
+[32mwordpress    |[0m Wordpress: setting up...
+[32mwordpress    |[0m --2022-06-26 07:09:06--  https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+[32mwordpress    |[0m Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.110.133, 185.199.109.133, ...
+[32mwordpress    |[0m Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.
+[32mwordpress    |[0m HTTP request sent, awaiting response... 200 OK
+[32mwordpress    |[0m Length: 6494444 (6.2M) [application/octet-stream]
+[32mwordpress    |[0m Saving to: 'wp-cli.phar'
+[32mwordpress    |[0m 
+[32mwordpress    |[0m      0K .......... .......... .......... .......... ..........  0%  842K 7s
+[32mwordpress    |[0m     50K .......... .......... .......... .......... ..........  1% 3.04M 5s
+[32mwordpress    |[0m    100K .......... .......... .......... .......... ..........  2% 1.43M 5s
+[32mwordpress    |[0m    150K .......... .......... .......... .......... ..........  3% 5.06M 4s
+[32mwordpress    |[0m    200K .......... .......... .......... .......... ..........  3% 5.70M 3s
+[32mwordpress    |[0m    250K .......... .......... .......... .......... ..........  4% 2.15M 3s
+[32mwordpress    |[0m    300K .......... .......... .......... .......... ..........  5% 7.33M 3s
+[32mwordpress    |[0m    350K .......... .......... .......... .......... ..........  6% 6.51M 2s
+[32mwordpress    |[0m    400K .......... .......... .......... .......... ..........  7% 9.77M 2s
+[32mwordpress    |[0m    450K .......... .......... .......... .......... ..........  7% 9.75M 2s
+[32mwordpress    |[0m    500K .......... .......... .......... .......... ..........  8% 12.2M 2s
+[32mwordpress    |[0m    550K .......... .......... .......... .......... ..........  9% 2.53M 2s
+[32mwordpress    |[0m    600K .......... .......... .......... .......... .......... 10% 12.7M 2s
+[32mwordpress    |[0m    650K .......... .......... .......... .......... .......... 11% 16.5M 2s
+[32mwordpress    |[0m    700K .......... .......... .......... .......... .......... 11% 17.1M 2s
+[32mwordpress    |[0m    750K .......... .......... .......... .......... .......... 12% 15.8M 1s
+[32mwordpress    |[0m    800K .......... .......... .......... .......... .......... 13% 17.4M 1s
+[32mwordpress    |[0m    850K .......... .......... .......... .......... .......... 14% 21.7M 1s
+[32mwordpress    |[0m    900K .......... .......... .......... .......... .......... 14% 16.8M 1s
+[32mwordpress    |[0m    950K .......... .......... .......... .......... .......... 15% 15.0M 1s
+[32mwordpress    |[0m   1000K .......... .......... .......... .......... .......... 16% 21.5M 1s
+[32mwordpress    |[0m   1050K .......... .......... .......... .......... .......... 17% 27.4M 1s
+[32mwordpress    |[0m   1100K .......... .......... .......... .......... .......... 18% 25.9M 1s
+[32mwordpress    |[0m   1150K .......... .......... .......... .......... .......... 18% 2.80M 1s
+[32mwordpress    |[0m   1200K .......... .......... .......... .......... .......... 19% 29.5M 1s
+[32mwordpress    |[0m   1250K .......... .......... .......... .......... .......... 20% 27.3M 1s
+[32mwordpress    |[0m   1300K .......... .......... .......... .......... .......... 21% 25.2M 1s
+[32mwordpress    |[0m   1350K .......... .......... .......... .......... .......... 22% 22.3M 1s
+[32mwordpress    |[0m   1400K .......... .......... .......... .......... .......... 22% 21.8M 1s
+[32mwordpress    |[0m   1450K .......... .......... .......... .......... .......... 23% 52.5M 1s
+[32mwordpress    |[0m   1500K .......... .......... .......... .......... .......... 24% 26.9M 1s
+[32mwordpress    |[0m   1550K .......... .......... .......... .......... .......... 25% 9.83M 1s
+[32mwordpress    |[0m   1600K .......... .......... .......... .......... .......... 26%  127M 1s
+[32mwordpress    |[0m   1650K .......... .......... .......... .......... .......... 26%  236M 1s
+[32mwordpress    |[0m   1700K .......... .......... .......... .......... .......... 27%  375M 1s
+[32mwordpress    |[0m   1750K .......... .......... .......... .......... .......... 28% 20.9M 1s
+[32mwordpress    |[0m   1800K .......... .......... .......... .......... .......... 29%  193M 1s
+[33mnginx        |[0m Generating a RSA private key
+[32mwordpress    |[0m   1850K .......... .......... .......... .......... .......... 29% 22.9M 1s
+[32mwordpress    |[0m   1900K .......... .......... .......... .......... .......... 30% 44.8M 1s
+[32mwordpress    |[0m   1950K .......... .......... .......... .......... .......... 31% 15.1M 1s
+[32mwordpress    |[0m   2000K .......... .......... .......... .......... .......... 32% 6.03M 1s
+[32mwordpress    |[0m   2050K .......... .......... .......... .......... .......... 33% 8.51M 1s
+[32mwordpress    |[0m   2100K .......... .......... .......... .......... .......... 33% 17.8M 1s
+[32mwordpress    |[0m   2150K .......... .......... .......... .......... .......... 34%  278M 1s
+[32mwordpress    |[0m   2200K .......... .......... .......... .......... .......... 35%  363M 1s
+[32mwordpress    |[0m   2250K .......... .......... .......... .......... .......... 36%  362M 1s
+[32mwordpress    |[0m   2300K .......... .......... .......... .......... .......... 37%  359M 0s
+[32mwordpress    |[0m   2350K .......... .......... .......... .......... .......... 37%  330M 0s
+[32mwordpress    |[0m   2400K .......... .......... .......... .......... .......... 38% 10.7M 0s
+[32mwordpress    |[0m   2450K .......... .......... .......... .......... .......... 39% 43.5M 0s
+[32mwordpress    |[0m   2500K .......... .......... .......... .......... .......... 40% 55.5M 0s
+[32mwordpress    |[0m   2550K .......... .......... .......... .......... .......... 40% 31.3M 0s
+[32mwordpress    |[0m   2600K .......... .......... .......... .......... .......... 41% 40.4M 0s
+[32mwordpress    |[0m   2650K .......... .......... .......... .......... .......... 42% 28.7M 0s
+[32mwordpress    |[0m   2700K .......... .......... .......... .......... .......... 43%  139M 0s
+[32mwordpress    |[0m   2750K .......... .......... .......... .......... .......... 44% 53.4M 0s
+[32mwordpress    |[0m   2800K .......... .......... .......... .......... .......... 44% 31.9M 0s
+[32mwordpress    |[0m   2850K .......... .......... .......... .......... .......... 45% 33.2M 0s
+[32mwordpress    |[0m   2900K .......... .......... .......... .......... .......... 46%  144M 0s
+[32mwordpress    |[0m   2950K .......... .......... .......... .......... .......... 47% 89.2M 0s
+[32mwordpress    |[0m   3000K .......... .......... .......... .......... .......... 48%  354M 0s
+[32mwordpress    |[0m   3050K .......... .......... .......... .......... .......... 48% 22.7M 0s
+[32mwordpress    |[0m   3100K .......... .......... .......... .......... .......... 49% 5.77M 0s
+[32mwordpress    |[0m   3150K .......... .......... .......... .......... .......... 50% 10.9M 0s
+[32mwordpress    |[0m   3200K .......... .......... .......... .......... .......... 51% 14.4M 0s
+[32mwordpress    |[0m   3250K .......... .......... .......... .......... .......... 52% 13.7M 0s
+[32mwordpress    |[0m   3300K .......... .......... .......... .......... .......... 52% 17.1M 0s
+[32mwordpress    |[0m   3350K .......... .......... .......... .......... .......... 53% 15.1M 0s
+[32mwordpress    |[0m   3400K .......... .......... .......... .......... .......... 54% 16.2M 0s
+[32mwordpress    |[0m   3450K .......... .......... .......... .......... .......... 55% 10.4M 0s
+[32mwordpress    |[0m   3500K .......... .......... .......... .......... .......... 55%  122M 0s
+[32mwordpress    |[0m   3550K .......... .......... .......... .......... .......... 56% 93.5M 0s
+[32mwordpress    |[0m   3600K .......... .......... .......... .......... .......... 57%  135M 0s
+[32mwordpress    |[0m   3650K .......... .......... .......... .......... .......... 58%  355M 0s
+[32mwordpress    |[0m   3700K .......... .......... .......... .......... .......... 59%  361M 0s
+[32mwordpress    |[0m   3750K .......... .......... .......... .......... .......... 59%  301M 0s
+[32mwordpress    |[0m   3800K .......... .......... .......... .......... .......... 60%  364M 0s
+[32mwordpress    |[0m   3850K .......... .......... .......... .......... .......... 61%  366M 0s
+[32mwordpress    |[0m   3900K .......... .......... .......... .......... .......... 62%  128M 0s
+[32mwordpress    |[0m   3950K .......... .......... .......... .......... .......... 63% 7.44M 0s
+[32mwordpress    |[0m   4000K .......... .......... .......... .......... .......... 63% 12.1M 0s
+[32mwordpress    |[0m   4050K .......... .......... .......... .......... .......... 64% 7.80M 0s
+[32mwordpress    |[0m   4100K .......... .......... .......... .......... .......... 65% 12.4M 0s
+[32mwordpress    |[0m   4150K .......... .......... .......... .......... .......... 66% 10.4M 0s
+[32mwordpress    |[0m   4200K .......... .......... .......... .......... .......... 67% 7.70M 0s
+[32mwordpress    |[0m   4250K .......... .......... .......... .......... .......... 67% 11.7M 0s
+[32mwordpress    |[0m   4300K .......... .......... .......... .......... .......... 68% 16.4M 0s
+[32mwordpress    |[0m   4350K .......... .......... .......... .......... .......... 69% 26.0M 0s
+[32mwordpress    |[0m   4400K .......... .......... .......... .......... .......... 70% 9.11M 0s
+[32mwordpress    |[0m   4450K .......... .......... .......... .......... .......... 70% 31.4M 0s
+[32mwordpress    |[0m   4500K .......... .......... .......... .......... .......... 71% 29.6M 0s
+[32mwordpress    |[0m   4550K .......... .......... .......... .......... .......... 72% 26.4M 0s
+[32mwordpress    |[0m   4600K .......... .......... .......... .......... .......... 73% 28.3M 0s
+[32mwordpress    |[0m   4650K .......... .......... .......... .......... .......... 74% 8.71M 0s
+[32mwordpress    |[0m   4700K .......... .......... .......... .......... .......... 74% 52.2M 0s
+[32mwordpress    |[0m   4750K .......... .......... .......... .......... .......... 75% 15.3M 0s
+[32mwordpress    |[0m   4800K .......... .......... .......... .......... .......... 76% 52.9M 0s
+[32mwordpress    |[0m   4850K .......... .......... .......... .......... .......... 77% 28.9M 0s
+[32mwordpress    |[0m   4900K .......... .......... .......... .......... .......... 78%  355M 0s
+[32mwordpress    |[0m   4950K .......... .......... .......... .......... .......... 78%  302M 0s
+[32mwordpress    |[0m   5000K .......... .......... .......... .......... .......... 79%  369M 0s
+[32mwordpress    |[0m   5050K .......... .......... .......... .......... .......... 80%  369M 0s
+[32mwordpress    |[0m   5100K .......... .......... .......... .......... .......... 81%  369M 0s
+[32mwordpress    |[0m   5150K .......... .......... .......... .......... .......... 81% 21.4M 0s
+[32mwordpress    |[0m   5200K .......... .......... .......... .......... .......... 82% 16.1M 0s
+[32mwordpress    |[0m   5250K .......... .......... .......... .......... .......... 83% 7.93M 0s
+[32mwordpress    |[0m   5300K .......... .......... .......... .......... .......... 84% 30.2M 0s
+[32mwordpress    |[0m   5350K .......... .......... .......... .......... .......... 85% 26.7M 0s
+[32mwordpress    |[0m   5400K .......... .......... .......... .......... .......... 85% 31.0M 0s
+[32mwordpress    |[0m   5450K .......... .......... .......... .......... .......... 86% 29.7M 0s
+[32mwordpress    |[0m   5500K .......... .......... .......... .......... .......... 87% 29.9M 0s
+[32mwordpress    |[0m   5550K .......... .......... .......... .......... .......... 88% 15.7M 0s
+[32mwordpress    |[0m   5600K .......... .......... .......... .......... .......... 89% 29.7M 0s
+[32mwordpress    |[0m   5650K .......... .......... .......... .......... .......... 89% 30.2M 0s
+[32mwordpress    |[0m   5700K .......... .......... .......... .......... .......... 90%  110M 0s
+[32mwordpress    |[0m   5750K .......... .......... .......... .......... .......... 91%  298M 0s
+[32mwordpress    |[0m   5800K .......... .......... .......... .......... .......... 92%  361M 0s
+[32mwordpress    |[0m   5850K .......... .......... .......... .......... .......... 93%  360M 0s
+[32mwordpress    |[0m   5900K .......... .......... .......... .......... .......... 93%  363M 0s
+[32mwordpress    |[0m   5950K .......... .......... .......... .......... .......... 94% 13.5M 0s
+[32mwordpress    |[0m   6000K .......... .......... .......... .......... .......... 95% 28.7M 0s
+[32mwordpress    |[0m   6050K .......... .......... .......... .......... .......... 96% 16.8M 0s
+[32mwordpress    |[0m   6100K .......... .......... .......... .......... .......... 96% 17.8M 0s
+[32mwordpress    |[0m   6150K .......... .......... .......... .......... .......... 97% 26.8M 0s
+[32mwordpress    |[0m   6200K .......... .......... .......... .......... .......... 98% 28.4M 0s
+[32mwordpress    |[0m   6250K .......... .......... .......... .......... .......... 99% 19.1M 0s
+[32mwordpress    |[0m   6300K .......... .......... .......... .......... ..        100% 84.3M=0.5s
+[32mwordpress    |[0m 
+[32mwordpress    |[0m 2022-06-26 07:09:07 (13.6 MB/s) - 'wp-cli.phar' saved [6494444/6494444]
+[32mwordpress    |[0m 
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] /usr/bin/mysqld (mysqld 10.5.16-MariaDB) starting as process 1 ...
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Uses event mutexes
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Compressed tables use zlib 1.2.12
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Number of pools: 1
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] mysqld: O_TMPFILE is not supported on /var/tmp (disabling future attempts)
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Using Linux native AIO
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Initializing buffer pool, total size = 134217728, chunk size = 134217728
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Completed initialization of buffer pool
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: 128 rollback segments are active.
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Setting file './ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: File './ibtmp1' size is now 12 MB.
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: 10.5.16 started; log sequence number 45118; transaction id 20
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] Plugin 'FEEDBACK' is disabled.
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] InnoDB: Buffer pool(s) load completed at 220626  7:09:07
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] Server socket created on IP: '0.0.0.0'.
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] Reading of all Master_info entries succeeded
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] Added new Master_info '' to hash table
+[36mmariadb      |[0m 2022-06-26  7:09:07 0 [Note] /usr/bin/mysqld: ready for connections.
+[36mmariadb      |[0m Version: '10.5.16-MariaDB'  socket: '/run/mysqld/mysqld.sock'  port: 3306  MariaDB Server
+[33mnginx        |[0m ...............................................................................................................................................................++++
+[32mwordpress    |[0m Downloading WordPress 6.0 (en_US)...
+[33mnginx        |[0m .............++++
+[33mnginx        |[0m writing new private key to '/etc/ssl/private/nginx.key'
+[33mnginx        |[0m -----
+[33mnginx        |[0m Nginx: ssl is set up!
+[32mwordpress    |[0m md5 hash verified: 1f32a656f698efdaecedce7d0a230dd9
+[32mwordpress    |[0m Success: WordPress downloaded.
+[32mwordpress    |[0m Wordpress: creating users...
+[32mwordpress    |[0m Error: Error establishing a database connection. This either means that the username and password information in your `wp-config.php` file is incorrect or that contact with the database server at `wordpress.app-network` could not be established. This could mean your host’s database server is down.
+[32mwordpress    |[0m Error: Error establishing a database connection.
+[32mwordpress    |[0m Wordpress: set up!
+Gracefully stopping... (press Ctrl+C again to force)
