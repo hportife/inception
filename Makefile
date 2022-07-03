@@ -22,6 +22,9 @@ sclean: stop
 clean: stop
 	@ rm -rf ~/Desktop/inception
 
+fclean: clean 
+	@ docker rmi -f $$(docker images -aq)
+
 prune: clean
 	@ docker system prune -f
 
